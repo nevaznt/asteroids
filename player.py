@@ -39,9 +39,10 @@ class Player:
         if(keys[pygame.K_a]): self.angle -= self.movement_sensitivity
         elif(keys[pygame.K_d]): self.angle += self.movement_sensitivity
 
-        self.pos.x += self.dir.x * self.velocity
-        self.pos.y += self.dir.y * self.velocity
-        if(self.velocity > 0): self.velocity -= self.velocity_decrease
+        if(self.velocity > 0):
+            self.pos.x += self.dir.x * self.velocity
+            self.pos.y += self.dir.y * self.velocity
+            self.velocity -= self.velocity_decrease
 
     def draw(self, surf: pygame.Surface):
         vecs = self.get_rotated_ship()
