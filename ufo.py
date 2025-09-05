@@ -1,6 +1,5 @@
 import pygame
-
-Vector2 = pygame.math.Vector2
+from utils import Vector2
 
 class Ufo:
     def __init__(self, x, y, dx, dy):

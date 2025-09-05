@@ -1,8 +1,7 @@
 import pygame
 from utils import rotate_x
 from utils import rotate_y
-
-Vector2 = pygame.math.Vector2
+from utils import Vector2
 
 class Player:
     def __init__(self, x, y):
@@ -13,15 +12,7 @@ class Player:
         self.velocity = 0
         self.velocity_decrease = 0.025
         self.movement_sensitivity = 0.05
-        self.ship = [
-                    Vector2(0, -7), Vector2(0, -6),
-                    Vector2(-1, -5), Vector2(1, -5), Vector2(-1, -4), Vector2(1, -4),
-                    Vector2(-2, -3), Vector2(2, -3), Vector2(-2, -2), Vector2(2, -2), Vector2(-2, -1), Vector2(2, -1),
-                    Vector2(-3, 0), Vector2(3, 0), Vector2(-3, 1), Vector2(3, 1), Vector2(-3, 2), Vector2(3, 2),
-                    Vector2(-4, 3), Vector2(4, 3), Vector2(-4, 4), Vector2(4, 4), Vector2(-4, 5), Vector2(4, 5),
-                    Vector2(-5, 6), Vector2(5, 6),
-                    Vector2(-5, 7), Vector2(-4, 7), Vector2(-3, 7), Vector2(-2, 7), Vector2(-1, 7), Vector2(0, 7),
-                    Vector2(1, 7), Vector2(2, 7), Vector2(3, 7), Vector2(4, 7), Vector2(5, 7)]
+        self.ship = [Vector2(0, -7), Vector2(-5, 7),  Vector2(5, 7)]
 
     def get_rotated_ship(self):
         vecs = []
@@ -47,6 +38,4 @@ class Player:
     def draw(self, surf: pygame.Surface):
         vecs = self.get_rotated_ship()
 
-        pygame.draw.line(surf, "white", (vecs[0].x, vecs[0]. y), (vecs[26].x, vecs[26].y))
-        pygame.draw.line(surf, "white", (vecs[26].x, vecs[26]. y), (vecs[36].x, vecs[36].y))
-        pygame.draw.line(surf, "white", (vecs[36].x, vecs[36]. y), (vecs[0].x, vecs[0].y))
+        pygame.draw.polygon(surf, "white", vecs, 1)

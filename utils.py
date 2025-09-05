@@ -1,5 +1,12 @@
 import math
 import random
+import pygame
+
+SCREEN_WIDTH = 1080
+SCREEN_HEIGHT = 1080
+SCALE = 320
+
+Vector2 = pygame.math.Vector2
 
 def rotate_x(x, y, angle):
     return x*math.cos(angle)-y*math.sin(angle)
