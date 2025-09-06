@@ -5,6 +5,8 @@ from utils import rotate_x
 from utils import rotate_y
 from utils import SCALE
 from utils import Vector2
+from utils import COLOR_ON
+from utils import COLOR_OFF
 
 class Asteroid:
     def __init__(self):
@@ -63,6 +65,19 @@ class Asteroid:
         elif rand >= 0.5 and rand < 0.75: self.scale = 0.75
         else: self.scale = 1
 
+        self.mask = self.create_mask()
+
+    def create_mask(self):
+        tmp_surf = pygame.Surface((30, 30))
+
+        tmp_list = []
+        for i in range(len(self.asteroid)):
+            tmp_list.append(Vector2(rotate_x(self.asteroid[i].x, self.asteroid[i].y, self.angle)*self.scale + 14, rotate_y(self.asteroid[i].x, self.asteroid[i].y, self.angle)*self.scale + 14))
+        pygame.draw.polygon(tmp_surf, 'white', tmp_list)
+        tmp_surf.set_colorkey('#000000')
+
+        return pygame.mask.from_surface(tmp_surf)
+
     def update(self):
         length = math.sqrt(pow(abs(self.end.x - self.pos.x), 2) + pow(abs(self.end.y - self.pos.y), 2))
         for i in range(self.speed):
@@ -78,12 +93,12 @@ class Asteroid:
         for i in range(len(self.asteroid)):
             tmp_list.append(Vector2(rotate_x(self.asteroid[i].x, self.asteroid[i].y, self.angle)*self.scale + self.pos.x, rotate_y(self.asteroid[i].x, self.asteroid[i].y, self.angle)*self.scale + self.pos.y))
 
-        pygame.draw.polygon(surf, 'white', tmp_list, 1)
+        pygame.draw.polygon(surf, COLOR_ON, tmp_list, 1)
 
 class Asteroids:
     def __init__(self):
         self.list = []
-        self.spawn_interval = 50
+        self.spawn_interval = 100
         self.spawn_asteroid_in = random.randint(0, self.spawn_interval)
         self.spawn_cap = 10
 

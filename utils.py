@@ -5,6 +5,8 @@ import pygame
 SCREEN_WIDTH = 1080
 SCREEN_HEIGHT = 1080
 SCALE = 320
+COLOR_ON = '#FFFFFF'
+COLOR_OFF = '#000000'
 
 Vector2 = pygame.math.Vector2
 

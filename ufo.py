@@ -1,5 +1,7 @@
 import pygame
 from utils import Vector2
+from utils import COLOR_ON
+from utils import COLOR_OFF
 
 class Ufo:
     def __init__(self, x, y, dx, dy):
@@ -34,6 +36,6 @@ class Ufo:
 
     def draw(self, surf):
         for vec in self.ufo:
-            pygame.draw.rect(surf, 'white', [vec.x + self.pos.x, vec.y + self.pos.y, 1, 1])
+            pygame.draw.rect(surf, COLOR_ON, [vec.x + self.pos.x, vec.y + self.pos.y, 1, 1])
 
 

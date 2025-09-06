@@ -11,6 +11,8 @@ from asteroid import Asteroids
 from utils import SCREEN_WIDTH
 from utils import SCREEN_HEIGHT
 from utils import SCALE
+from utils import COLOR_ON
+from utils import COLOR_OFF
 from utils import Vector2
 
 pygame.init()
@@ -35,12 +37,12 @@ while True:
     keys = pygame.key.get_pressed()
 
     asteroids.update()
-    player.update(keys)
+    player.update(keys, asteroids.list)
 
     #for ufo in ufos: ufo.update()
 
     # draw
-    display.fill("black")
+    display.fill(COLOR_OFF)
 
     asteroids.draw(display)
     player.draw(display)
