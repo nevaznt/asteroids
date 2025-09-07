@@ -49,7 +49,7 @@ class Asteroid:
             self.pos.x = self.start.x
             self.pos.y = self.start.y
 
-        self.speed = random.randint(1, 4)
+        self.speed = random.randint(1, 2)
         self.asteroid = [Vector2(6, 3), Vector2(15, 5), Vector2(17, 0), Vector2(25, 4),
                          Vector2(26, 8), Vector2(25, 18), Vector2(28, 22), Vector2(17, 28), Vector2(6, 27), Vector2(0, 23), Vector2(2, 9)]
 
@@ -78,15 +78,23 @@ class Asteroid:
 
         return pygame.mask.from_surface(tmp_surf)
 
-    def update(self):
+    def get_dir(self):
         length = math.sqrt(pow(abs(self.end.x - self.pos.x), 2) + pow(abs(self.end.y - self.pos.y), 2))
+        return (self.end.x-self.pos.x)/length, (self.end.y-self.pos.y)/length
+
+    def update(self, bullets):
+        dx, dy = self.get_dir()
         for i in range(self.speed):
-            self.pos.x += (self.end.x-self.pos.x)/length
-            self.pos.y += (self.end.y-self.pos.y)/length
+            self.pos.x += dx
+            self.pos.y += dy
 
             if(self.pos.x-2 < self.end.x and self.pos.x+2 > self.end.x and self.pos.y-2 < self.end.y and self.pos.y+2 > self.end.y):
                 self.finished = True
                 break
+        for i in range(len(bullets.list)):
+            if self.mask.overlap(bullets.list[i].get_mask(), (bullets.list[i].pos.x+10 - self.pos.x, bullets.list[i].pos.y+10 - self.pos.y)):
+                self.finished = True
+                bullets.list[i].remove_me = True
 
     def draw(self, surf):
         tmp_list = []
@@ -98,18 +106,18 @@ class Asteroid:
 class Asteroids:
     def __init__(self):
         self.list = []
-        self.spawn_interval = 100
+        self.spawn_interval = 75
         self.spawn_asteroid_in = random.randint(0, self.spawn_interval)
         self.spawn_cap = 10
 
-    def update(self):
+    def update(self, bullets):
         if self.spawn_asteroid_in <= 0 and len(self.list) < self.spawn_cap:
             self.spawn_asteroid_in = random.randint(0, self.spawn_interval)
             self.list.append(Asteroid())
         else: self.spawn_asteroid_in -= 1
 
         for asteroid in self.list:
-            asteroid.update()
+            asteroid.update(bullets)
 
         i = 0
         while i < len(self.list):
