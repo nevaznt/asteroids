@@ -108,7 +108,7 @@ class Player:
                             self.dead_pixels.append(Vector2(j-14, i-14))
 
         for i in range(len(bullets.list)):
-            if self.mask.overlap(bullets.list[i].get_mask(), (bullets.list[i].pos.x+10 - self.pos.x, bullets.list[i].pos.y+10 - self.pos.y)) and not bullets.list[i].who_fired == 'player':
+            if self.mask.overlap(bullets.list[i].get_mask(), (bullets.list[i].pos.x+10 - self.pos.x-14, bullets.list[i].pos.y+10 - self.pos.y-14)) and not bullets.list[i].who_fired == 'player':
                 self.dead = True
                 bullets.list[i].remove_me = True
 
