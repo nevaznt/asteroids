@@ -8,6 +8,19 @@ SCALE = 320
 COLOR_ON = '#FFFFFF'
 COLOR_OFF = '#000000'
 
+class Score:
+    def __init__(self):
+        self.val = 0
+
+    def add(self, num):
+        self.val += num
+
+    def reduce(self, percent):
+        self.val = math.ceil(self.val*((100-percent)/100))
+
+    def get(self):
+        return int(self.val)
+
 Vector2 = pygame.math.Vector2
 
 def rotate_x(x, y, angle):

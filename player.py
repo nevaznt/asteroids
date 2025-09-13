@@ -27,6 +27,9 @@ class Player:
         self.dead_timer = 0
         self.fire_cooldown = 0
         self.fire_cooldown_time = 15
+        self.spawn_protect = 0
+        self.spawn_protect_time = 180
+        self.moved = True
 
     def get_rotated_ship(self, pos: Vector2):
         vecs = []
@@ -52,8 +55,10 @@ class Player:
         self.dead_pixels = []
         self.dead_pixels_dir = []
         self.fire_cooldown = 0
+        self.spawn_protect = self.spawn_protect_time
+        self.moved = False
 
-    def update(self, keys, asteroids, bullets):
+    def update(self, keys, asteroids, bullets, score):
         if self.dead:
             if self.dead_timer > 0:
                 self.dead_timer -= 1
@@ -67,13 +72,21 @@ class Player:
 
         self.dir.x = rotate_x(0, -1, self.angle)
         self.dir.y = rotate_y(0, -1, self.angle)
-        if(keys[pygame.K_SPACE] and self.velocity <= 0):
+        if keys[pygame.K_SPACE] and self.velocity <= 0:
+            if not self.moved: self.spawn_protect = self.spawn_protect_time
+            self.moved = True
             self.velocity = self.boost
 
-        if(keys[pygame.K_a]): self.angle -= self.rotation_sensitivity
-        elif(keys[pygame.K_d]): self.angle += self.rotation_sensitivity
+        if keys[pygame.K_a]:
+            if not self.moved: self.spawn_protect = self.spawn_protect_time
+            self.moved = True
+            self.angle -= self.rotation_sensitivity
+        elif keys[pygame.K_d]:
+            if not self.moved: self.spawn_protect = self.spawn_protect_time
+            self.moved = True
+            self.angle += self.rotation_sensitivity
 
-        if(self.velocity > 0):
+        if self.velocity > 0:
             self.pos.x += self.dir.x * self.velocity
             self.pos.y += self.dir.y * self.velocity
             self.velocity -= self.velocity_decrease
@@ -85,19 +98,26 @@ class Player:
         #self.pos.y = mouse_pos[1]/(SCREEN_HEIGHT/SCALE)
 
         if keys[pygame.K_w] and self.fire_cooldown <= 0:
+            if not self.moved: self.spawn_protect = self.spawn_protect_time
+            self.moved = True
             self.fire_cooldown = self.fire_cooldown_time
             bullets.list.append(Bullet(self.pos.x, self.pos.y, self.dir.x, self.dir.y, 'player'))
         elif self.fire_cooldown > 0: self.fire_cooldown -= 1
 
         # check collisions
+        if self.spawn_protect > 0:
+            self.spawn_protect -= 1
+            if self.spawn_protect == 0 and not self.moved: self.spawn_protect = self.spawn_protect_time
+            return
+
         for ast in asteroids:
             if self.mask.overlap(ast.mask, (ast.pos.x - self.pos.x, ast.pos.y - self.pos.y)):
+                score.reduce(75)
                 self.dead = True
                 self.dead_timer = 120
                 tmp_surf = pygame.Surface((30, 30))
                 vecs = self.get_rotated_ship(Vector2(14, 14))
                 pygame.draw.polygon(tmp_surf, 'white', vecs, 1)
-                dx, dy = ast.get_dir()
                 for i in range(0, 30):
                     for j in range(0, 30):
                         if tmp_surf.get_at((j, i)) == pygame.Color(255, 255, 255):
@@ -109,6 +129,7 @@ class Player:
 
         for i in range(len(bullets.list)):
             if self.mask.overlap(bullets.list[i].get_mask(), (bullets.list[i].pos.x+10 - self.pos.x-14, bullets.list[i].pos.y+10 - self.pos.y-14)) and not bullets.list[i].who_fired == 'player':
+                score.reduce(50)
                 self.dead = True
                 bullets.list[i].remove_me = True
 
@@ -117,6 +138,9 @@ class Player:
             for vec in self.dead_pixels:
                 pygame.draw.rect(surf, COLOR_ON, [vec.x + self.pos.x, vec.y + self.pos.y, 1, 1])
             return
+
+        if int(self.spawn_protect / 14) % 2 != 0: return
+
         vecs = self.get_rotated_ship(self.pos)
 
         pygame.draw.polygon(surf, COLOR_ON, vecs, 1)

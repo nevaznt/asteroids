@@ -88,7 +88,7 @@ class Asteroid:
         length = math.sqrt(pow(abs(self.end.x - self.pos.x), 2) + pow(abs(self.end.y - self.pos.y), 2))
         return (self.end.x-self.pos.x)/length, (self.end.y-self.pos.y)/length
 
-    def update(self, bullets):
+    def update(self, bullets, score):
         if self.break_me:
             if len(self.broken_pixels) == 0:
                 self.break_animation = self.break_animation_time
@@ -146,6 +146,7 @@ class Asteroid:
 
         for i in range(len(bullets.list)):
             if self.mask.overlap(bullets.list[i].get_mask(), (bullets.list[i].pos.x+10 - self.pos.x, bullets.list[i].pos.y+10 - self.pos.y)):
+                if bullets.list[i].who_fired == 'player': score.add((1-self.scale+0.25) * 100)
                 self.break_me = True
                 bullets.list[i].remove_me = True
 
@@ -170,17 +171,17 @@ class Asteroids:
         self.spawn_asteroid_in = random.randint(0, self.spawn_interval)
         self.spawn_cap = 10
 
-    def update(self, bullets):
+    def update(self, bullets, score):
         if self.spawn_asteroid_in <= 0 and len(self.list) < self.spawn_cap:
             self.spawn_asteroid_in = random.randint(0, self.spawn_interval)
             self.list.append(Asteroid())
         else: self.spawn_asteroid_in -= 1
 
         for asteroid in self.list:
-            asteroid.update(bullets)
+            asteroid.update(bullets, score)
 
         for asteroid in self.broken:
-            asteroid.update(bullets)
+            asteroid.update(bullets, score)
 
         for i in range(len(self.list)):
             if self.list[i].break_me:
