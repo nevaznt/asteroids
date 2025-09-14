@@ -60,6 +60,20 @@ class Player:
 
     def update(self, keys, asteroids, bullets, score):
         if self.dead:
+            if len(self.dead_pixels) == 0:
+                self.dead_timer = 120
+                tmp_surf = pygame.Surface((30, 30))
+                vecs = self.get_rotated_ship(Vector2(14, 14))
+                pygame.draw.polygon(tmp_surf, 'white', vecs, 1)
+                for i in range(0, 30):
+                    for j in range(0, 30):
+                        if tmp_surf.get_at((j, i)) == pygame.Color(255, 255, 255):
+                            if j < 15 and i < 15: self.dead_pixels_dir.append(Vector2(-1, -1))
+                            elif j >= 15 and i < 15: self.dead_pixels_dir.append(Vector2(1, -1))
+                            elif j >= 15 and i >= 15: self.dead_pixels_dir.append(Vector2(1, 1))
+                            elif j < 15 and i >= 15: self.dead_pixels_dir.append(Vector2(-1, 1))
+                            self.dead_pixels.append(Vector2(j-14, i-14))
+
             if self.dead_timer > 0:
                 self.dead_timer -= 1
                 for i in range(len(self.dead_pixels)):
@@ -105,6 +119,9 @@ class Player:
         elif self.fire_cooldown > 0: self.fire_cooldown -= 1
 
         # check collisions
+        if self.pos.x < 0 or self.pos.x > SCALE or self.pos.y < 0 or self.pos.y > SCALE:
+            self.dead = True
+
         if self.spawn_protect > 0:
             self.spawn_protect -= 1
             if self.spawn_protect == 0 and not self.moved: self.spawn_protect = self.spawn_protect_time
@@ -114,18 +131,6 @@ class Player:
             if self.mask.overlap(ast.mask, (ast.pos.x - self.pos.x, ast.pos.y - self.pos.y)):
                 score.reduce(75)
                 self.dead = True
-                self.dead_timer = 120
-                tmp_surf = pygame.Surface((30, 30))
-                vecs = self.get_rotated_ship(Vector2(14, 14))
-                pygame.draw.polygon(tmp_surf, 'white', vecs, 1)
-                for i in range(0, 30):
-                    for j in range(0, 30):
-                        if tmp_surf.get_at((j, i)) == pygame.Color(255, 255, 255):
-                            if j < 15 and i < 15: self.dead_pixels_dir.append(Vector2(-1, -1))
-                            elif j >= 15 and i < 15: self.dead_pixels_dir.append(Vector2(1, -1))
-                            elif j >= 15 and i >= 15: self.dead_pixels_dir.append(Vector2(1, 1))
-                            elif j < 15 and i >= 15: self.dead_pixels_dir.append(Vector2(-1, 1))
-                            self.dead_pixels.append(Vector2(j-14, i-14))
 
         for i in range(len(bullets.list)):
             if self.mask.overlap(bullets.list[i].get_mask(), (bullets.list[i].pos.x+10 - self.pos.x-14, bullets.list[i].pos.y+10 - self.pos.y-14)) and not bullets.list[i].who_fired == 'player':
