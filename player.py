@@ -27,9 +27,9 @@ class Player:
         self.dead_timer = 0
         self.fire_cooldown = 0
         self.fire_cooldown_time = 15
-        self.spawn_protect = 0
         self.spawn_protect_time = 180
-        self.moved = True
+        self.spawn_protect = self.spawn_protect_time
+        self.moved = False
 
     def get_rotated_ship(self, pos: Vector2):
         vecs = []

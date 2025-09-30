@@ -3,7 +3,7 @@ import math
 import random
 from sys import exit
 from player import Player
-from ufo import Ufo
+from ufo import Ufos
 from utils import get_random_direction
 from utils import rotate_x
 from utils import rotate_y
@@ -27,10 +27,12 @@ display = pygame.Surface((SCALE, SCALE))
 
 score = Score()
 
-#ufos = []
+ufos = Ufos()
 player = Player(SCALE/2, SCALE/2)
 asteroids = Asteroids()
 bullets = Bullets()
+
+intro_screen = True
 
 while True:
     for event in pygame.event.get():
@@ -44,19 +46,23 @@ while True:
     asteroids.update(bullets, score)
     player.update(keys, asteroids.list, bullets, score)
     bullets.update()
-
-    #for ufo in ufos: ufo.update()
+    if not intro_screen: ufos.update(bullets, score)
 
     # draw
     display.fill(COLOR_OFF)
+    if intro_screen:
+        title_font = pygame.font.Font('./megamax.ttf', 32)
+        title_text = title_font.render('ASTEROIDS', False, COLOR_ON)
+        display.blit(title_text, (SCALE/2 - title_text.get_width()/2, 40))
 
     asteroids.draw(display)
     player.draw(display)
+    if not intro_screen: ufos.draw(display)
     bullets.draw(display)
 
-    #for ufo in ufos: ufo.draw(display)
-
     display.blit(font.render(str(score.get()), False, COLOR_ON), (5, 5))
+
+    if player.moved: intro_screen = False
 
     screen.blit(pygame.transform.scale(display, (SCREEN_WIDTH, SCREEN_HEIGHT)), (0, 0));
     pygame.display.update()

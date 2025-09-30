@@ -171,6 +171,9 @@ class Asteroids:
         self.spawn_asteroid_in = random.randint(0, self.spawn_interval)
         self.spawn_cap = 10
 
+        for i in range(10):
+            self.list.append(Asteroid())
+
     def update(self, bullets, score):
         if self.spawn_asteroid_in <= 0 and len(self.list) < self.spawn_cap:
             self.spawn_asteroid_in = random.randint(0, self.spawn_interval)
