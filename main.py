@@ -44,7 +44,7 @@ while True:
     keys = pygame.key.get_pressed()
 
     asteroids.update(bullets, score)
-    player.update(keys, asteroids.list, bullets, score)
+    player.update(keys, asteroids.list, ufos.list, bullets, score)
     bullets.update()
     if not intro_screen: ufos.update(bullets, score)
 

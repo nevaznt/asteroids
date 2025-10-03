@@ -19,7 +19,6 @@ class Asteroid:
         self.break_animation_time = 300
         self.broken_pixels = []
         self.broken_pixels_dir = []
-        self.broken_pixels_color = []
 
         rand = random.random()
         if rand < 0.25:
@@ -97,38 +96,12 @@ class Asteroid:
                 for i in range(len(self.asteroid)):
                     tmp_list.append(Vector2(rotate_x(self.asteroid[i].x, self.asteroid[i].y, self.angle)*self.scale + 14, rotate_y(self.asteroid[i].x, self.asteroid[i].y, self.angle)*self.scale + 14))
                 pygame.draw.polygon(tmp_surf, 'white', tmp_list, 1)
-                tmp_circle = pygame.Surface((40, 40))
-                pygame.draw.circle(tmp_circle, 'green', (20, 20), 20, 1)
-                circle_point_list = []
-                for i in range(40):
-                    for j in range(40):
-                        if tmp_circle.get_at((j, i)) == pygame.Color(0, 255, 0):
-                            #tmp_circle.set_at((j, i), pygame.Color(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
-                            circle_point_list.append(Vector2(j, i))
-                tmp_circle.set_colorkey('#000000')
                 for i in range(0, 30):
                     for j in range(0, 30):
                         if tmp_surf.get_at((j, i)) == pygame.Color(255, 255, 255):
-                            tmp_list = []
-                            for v in range(len(circle_point_list)):
-                                cir_x = circle_point_list[v].x+self.pos.x - 20
-                                cir_y = circle_point_list[v].x+self.pos.y - 20
-                                this_x = j + self.pos.x - 14
-                                this_y = i + self.pos.y - 14
-                                tmp_list.append(math.sqrt(abs(math.pow(cir_x-this_x, 2))+abs(math.pow(cir_y-this_y, 2))))
-                            tmp_list_copy = tmp_list.copy()
-                            tmp_list_copy.sort()
-                            for v in range(len(tmp_list)):
-                                if tmp_list_copy[0] == tmp_list[v] and circle_point_list[v].x != -999999 and tmp_list[v] != 0:
-                                    self.broken_pixels_color.append(tmp_circle.get_at((int(circle_point_list[v].x), int(circle_point_list[v].y))))
-                                    cir_x = circle_point_list[v].x+self.pos.x - 20
-                                    cir_y = circle_point_list[v].x+self.pos.y - 20
-                                    this_x = j + self.pos.x - 14
-                                    this_y = i + self.pos.y - 14
-                                    self.broken_pixels_dir.append(pygame.Vector3((cir_x-this_x)/tmp_list[v], (cir_y-this_y)/tmp_list[v], 2))
-                                    circle_point_list[v].x = -999999
-                                    self.broken_pixels.append(Vector2(j, i))
-                                    break
+                            self.broken_pixels.append(Vector2(j, i))
+                            length = math.sqrt((j-14)**2 + (i-14)**2)
+                            self.broken_pixels_dir.append(pygame.Vector3((j-14)/length, (i-14)/length, 2))
 
             if self.break_animation > 0:
                 self.break_animation -= 1

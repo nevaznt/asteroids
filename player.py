@@ -58,7 +58,7 @@ class Player:
         self.spawn_protect = self.spawn_protect_time
         self.moved = False
 
-    def update(self, keys, asteroids, bullets, score):
+    def update(self, keys, asteroids, ufos, bullets, score):
         if self.dead:
             if len(self.dead_pixels) == 0:
                 self.dead_timer = 120
@@ -129,7 +129,12 @@ class Player:
 
         for ast in asteroids:
             if self.mask.overlap(ast.mask, (ast.pos.x - self.pos.x, ast.pos.y - self.pos.y)):
-                score.reduce(75)
+                score.reduce(50)
+                self.dead = True
+
+        for ufo in ufos:
+            if self.mask.overlap(ufo.mask, (ufo.pos.x+15 - self.pos.x, ufo.pos.y+20 - self.pos.y)):
+                score.reduce(50)
                 self.dead = True
 
         for i in range(len(bullets.list)):
