@@ -126,7 +126,7 @@ class Asteroid:
     def draw(self, surf):
         if self.break_me:
             for vec in self.broken_pixels:
-                pygame.draw.rect(surf, 'white', [vec.x + self.pos.x - 14, vec.y + self.pos.y - 14, 1, 1])
+                pygame.draw.rect(surf, COLOR_ON, [vec.x + self.pos.x - 14, vec.y + self.pos.y - 14, 1, 1])
 
             return
 
